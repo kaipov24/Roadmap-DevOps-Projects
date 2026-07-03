@@ -14,4 +14,4 @@ df -h --total | tail -1 | awk '{printf "Free %.0f%% vs Used %.0f%%\n", $4*100/$2
 ps -aux --sort=-%cpu | head -5
 
 #Top 5 processes by memory usage
-ps -aux --sort=-%mem | head -5ß
+ps -aux --sort=-%mem | head -5
