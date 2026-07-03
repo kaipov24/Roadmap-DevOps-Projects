@@ -27,4 +27,4 @@ Run it:
 ./server-stats.sh
 ```
 
-Project from [roadmap.sh Server Stats](https://roadmap.sh/projects/server-stats).
+Project from https://roadmap.sh/projects/server-stats
