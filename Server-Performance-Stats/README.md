@@ -11,7 +11,7 @@
 Clone this repository:
 
 ```bash
-git clone https://github.com/kaipov24/devops-Projects.git
+git clone https://github.com/kaipov24/Roadmap-DevOps-Projects.git
 cd Server-Performance-Stats
 ```
 
