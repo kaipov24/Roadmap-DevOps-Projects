@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="title">
+  <title id="title">Server</title>
+  <rect width="120" height="120" rx="24" fill="#e9f5ee"/>
+  <rect x="28" y="30" width="64" height="22" rx="5" fill="#24a148"/>
+  <rect x="28" y="58" width="64" height="22" rx="5" fill="#1f2937"/>
+  <rect x="28" y="86" width="64" height="8" rx="4" fill="#94a3b8"/>
+  <circle cx="40" cy="41" r="4" fill="#ffffff"/>
+  <circle cx="40" cy="69" r="4" fill="#24a148"/>
+  <rect x="52" y="38" width="28" height="6" rx="3" fill="#ffffff"/>
+  <rect x="52" y="66" width="28" height="6" rx="3" fill="#94a3b8"/>
+</svg>
