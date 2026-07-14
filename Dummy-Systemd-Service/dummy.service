@@ -1,0 +1,15 @@
+/etc/systemd/system/dummy.service
+
+[Unit]
+Description=My Dummy Service
+After=network.target
+
+[Service]
+Type=simple
+User=kairat
+WorkingDirectory=/home/kairat/Desktop
+ExecStart=/home/kairat/Desktop/dummy.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
