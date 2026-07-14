@@ -14,3 +14,5 @@ https://roadmap.sh/projects/simple-monitoring-dashboard
 https://roadmap.sh/projects/dummy-systemd-service
 
 https://roadmap.sh/projects/basic-dockerfile
+
+https://roadmap.sh/projects/ec2-instance
