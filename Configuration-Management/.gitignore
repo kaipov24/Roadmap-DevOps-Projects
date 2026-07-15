@@ -1,0 +1,13 @@
+# Private SSH keys
+*.pem
+id_rsa
+id_ed25519
+
+# Ansible retry files
+*.retry
+
+# macOS
+.DS_Store
+
+# Optional local inventory with real IPs/users
+inventory.ini

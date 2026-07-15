@@ -1,0 +1,16 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/app
+
+- name: Remove default Nginx page
+  ansible.builtin.file:
+    path: /var/www/html/index.nginx-debian.html
+    state: absent
+
+- name: Extract website archive
+  ansible.builtin.unarchive:
+    src: website.tar.gz
+    dest: /var/www/html
+    owner: www-data
+    group: www-data
+    mode: "0755"
