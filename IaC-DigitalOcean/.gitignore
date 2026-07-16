@@ -1,0 +1,15 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+crash.log
+crash.*.log
+*.tfplan
+
+# Sensitive variable files
+terraform.tfvars
+*.auto.tfvars
+
+# SSH private key
+id_ed25519
