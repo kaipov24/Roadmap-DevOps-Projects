@@ -47,3 +47,19 @@ jobs:
           tags: |
             ${{ steps.image.outputs.name }}:latest
             ${{ steps.image.outputs.name }}:${{ github.sha }}
+
+      - name: Deploy locally
+        run: |
+          docker pull "${{ steps.image.outputs.name }}:${{ github.sha }}"
+
+          docker stop "${CONTAINER_NAME}" 2>/dev/null || true
+          docker rm "${CONTAINER_NAME}" 2>/dev/null || true
+
+          docker run -d \
+            --name "${CONTAINER_NAME}" \
+            --restart unless-stopped \
+            -p "${HOST_PORT}:${CONTAINER_PORT}" \
+            -e SECRET_MESSAGE="${{ secrets.SECRET_MESSAGE }}" \
+            -e USERNAME="${{ secrets.BASIC_AUTH_USERNAME }}" \
+            -e PASSWORD="${{ secrets.BASIC_AUTH_PASSWORD }}" \
+            "${{ steps.image.outputs.name }}:${{ github.sha }}"
