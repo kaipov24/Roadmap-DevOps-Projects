@@ -1,0 +1,10 @@
+{
+  "name": "dockerized-service",
+  "version": "1.0.0",
+  "description": "Simple Node.js service with Basic Auth protected secret route.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT"
+}
