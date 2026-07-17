@@ -1,0 +1,49 @@
+name: Deploy Dockerized Service
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "Dockerized-Service/**"
+      - ".github/workflows/deploy-dockerized-service.yml"
+  workflow_dispatch:
+
+env:
+  CONTAINER_NAME: dockerized-service
+  CONTAINER_PORT: "3000"
+  HOST_PORT: "3000"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set image name
+        id: image
+        run: |
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}/dockerized-service"
+          echo "name=${IMAGE}" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: Dockerized-Service
+          push: true
+          tags: |
+            ${{ steps.image.outputs.name }}:latest
+            ${{ steps.image.outputs.name }}:${{ github.sha }}
