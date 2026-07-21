@@ -1,3 +1,29 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for roles/app
+
+- name: Create application directory
+  ansible.builtin.file:
+    path: "{{ app_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Copy production Docker Compose file
+  ansible.builtin.template:
+    src: docker-compose.prod.yml.j2
+    dest: "{{ app_dir }}/docker-compose.yml"
+    mode: "0644"
+
+- name: Pull application containers
+  ansible.builtin.command:
+    cmd: docker compose pull
+    chdir: "{{ app_dir }}"
+  changed_when: "'Downloaded newer image' in docker_compose_pull.stdout or 'Pull complete' in docker_compose_pull.stdout"
+  register: docker_compose_pull
+
+- name: Start application containers
+  ansible.builtin.command:
+    cmd: docker compose up -d
+    chdir: "{{ app_dir }}"
+  changed_when: "'Started' in docker_compose_up.stdout or 'Created' in docker_compose_up.stdout or 'Recreated' in docker_compose_up.stdout"
+  register: docker_compose_up

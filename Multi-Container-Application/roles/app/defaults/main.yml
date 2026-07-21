@@ -1,3 +1,9 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # defaults file for roles/app
+
+app_dir: /opt/todo-api
+api_image: ghcr.io/kaipov24/roadmap-devops-projects/multi-container-application:latest
+api_port: 3001
+container_port: 3000
+mongodb_uri: mongodb://mongodb:27017/todo_api
