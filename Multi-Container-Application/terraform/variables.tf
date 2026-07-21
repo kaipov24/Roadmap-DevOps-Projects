@@ -49,7 +49,7 @@ variable "api_port" {
 variable "instance_type" {
   description = "EC2 instance type for the API host."
   type        = string
-  default     = "t2.micro"
+  default     = "t3.micro"
 }
 
 variable "key_name" {

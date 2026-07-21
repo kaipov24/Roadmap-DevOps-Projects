@@ -1,0 +1,10 @@
+- name: Configure and deploy TODO API
+  hosts: app
+  become: true
+
+  roles:
+    - role: docker
+      tags: docker
+
+    - role: app
+      tags: app
