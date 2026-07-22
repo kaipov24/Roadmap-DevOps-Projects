@@ -10,6 +10,15 @@ const mongoUri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/todo_api"
 
 app.use(express.json());
 
+app.get("/health", (req, res) => {
+  const databaseState = mongoose.connection.readyState;
+
+  res.status(databaseState === 1 ? 200 : 503).json({
+    status: databaseState === 1 ? "ok" : "unavailable",
+    database: databaseState === 1 ? "connected" : "disconnected",
+  });
+});
+
 function todoResponse(todo) {
   return {
     id: todo._id.toString(),

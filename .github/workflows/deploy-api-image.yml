@@ -9,9 +9,15 @@ on:
       - ".github/workflows/deploy-api-image.yml"
   workflow_dispatch:
 
+env:
+  APP_DIR: Multi-Container-Application
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH || '/opt/todo-api' }}
+      API_PORT: ${{ secrets.API_PORT || '3001' }}
 
     permissions:
       contents: read
@@ -21,11 +27,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Set image name
         id: image
         run: |
           IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}/multi-container-application"
           echo "name=${IMAGE}" >> "$GITHUB_OUTPUT"
+
+      - name: Validate deployment secrets
+        run: |
+          test -n "${{ secrets.AWS_HOST }}"
+          test -n "${{ secrets.AWS_USER }}"
+          test -n "${{ secrets.AWS_SSH_KEY }}"
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -37,8 +52,35 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: Multi-Container-Application
+          context: ${{ env.APP_DIR }}
           push: true
           tags: |
             ${{ steps.image.outputs.name }}:latest
             ${{ steps.image.outputs.name }}:${{ github.sha }}
+
+      - name: Deploy with Docker Compose
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          port: ${{ secrets.AWS_SSH_PORT || 22 }}
+          script: |
+            set -e
+
+            cd "${{ env.DEPLOY_PATH }}"
+
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+            docker compose pull
+            docker compose up -d
+            docker image prune -f
+
+      - name: Verify deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          port: ${{ secrets.AWS_SSH_PORT || 22 }}
+          script: |
+            curl --fail --silent --show-error --max-time 10 "http://127.0.0.1:${{ env.API_PORT }}/health"

@@ -48,6 +48,12 @@ Set `MONGODB_URI` to use a different MongoDB instance.
 
 ## Endpoints
 
+### Health check
+
+```sh
+curl http://localhost:3001/health
+```
+
 ### Get all todos
 
 ```sh
@@ -81,3 +87,26 @@ curl -X PUT http://localhost:3001/todos/<id> \
 ```sh
 curl -X DELETE http://localhost:3001/todos/<id>
 ```
+
+## CI/CD deployment
+
+The GitHub Actions workflow at `.github/workflows/deploy-api-image.yml` deploys the app whenever changes are pushed to `main`.
+
+The pipeline:
+
+- Builds the Node.js API Docker image.
+- Pushes the image to GitHub Container Registry.
+- Connects to the remote server over SSH.
+- Pulls the newest Docker image.
+- Runs `docker compose up -d`.
+
+Add these GitHub repository secrets:
+
+- `AWS_HOST` - remote server IP address or hostname.
+- `AWS_USER` - SSH user for the remote server.
+- `AWS_SSH_KEY` - private SSH key for the remote server.
+- `AWS_SSH_PORT` - optional SSH port, defaults to `22`.
+- `DEPLOY_PATH` - optional remote directory, defaults to `/opt/todo-api`.
+- `API_PORT` - optional public API port, defaults to `3001`.
+
+The production server is prepared by the Ansible playbook in `ansible/setup.yml`. The app role writes `/opt/todo-api/docker-compose.yml` from `roles/app/templates/docker-compose.prod.yml.j2`, using the GHCR API image, MongoDB, and the persistent `mongodb_data` volume. Re-run Ansible if the production Compose template changes.
