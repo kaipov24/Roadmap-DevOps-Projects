@@ -77,4 +77,18 @@ jobs:
 
       - name: Verify deployment
         run: |
-          curl --fail --silent --show-error --max-time 10 "http://127.0.0.1:${API_PORT}/health"
+          cd "${DEPLOY_PATH}"
+
+          for attempt in {1..12}; do
+            if curl --fail --silent --show-error --max-time 10 "http://127.0.0.1:${API_PORT}/health"; then
+              exit 0
+            fi
+
+            echo "Health check failed; retrying in 5 seconds..."
+            sleep 5
+          done
+
+          docker compose ps
+          docker compose logs --tail=100 api
+          docker compose logs --tail=100 mongodb
+          exit 1
