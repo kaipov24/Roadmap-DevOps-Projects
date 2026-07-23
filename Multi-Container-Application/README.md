@@ -96,17 +96,16 @@ The pipeline:
 
 - Builds the Node.js API Docker image.
 - Pushes the image to GitHub Container Registry.
-- Connects to the remote server over SSH.
-- Pulls the newest Docker image.
-- Runs `docker compose up -d`.
+- Runs the deployment job on a self-hosted GitHub Actions runner installed on the remote server.
+- Pulls the newest Docker image on the server.
+- Runs `docker compose up -d` on the server.
 
 Add these GitHub repository secrets:
 
-- `AWS_HOST` - remote server IP address or hostname.
-- `AWS_USER` - SSH user for the remote server.
-- `AWS_SSH_KEY` - private SSH key for the remote server.
-- `AWS_SSH_PORT` - optional SSH port, defaults to `22`.
+- `GHCR_TOKEN` - optional token for pulling private GHCR images from the self-hosted runner. Use a token with package read access if `GITHUB_TOKEN` cannot pull the image.
 - `DEPLOY_PATH` - optional remote directory, defaults to `/opt/todo-api`.
 - `API_PORT` - optional public API port, defaults to `3001`.
 
 The production server is prepared by the Ansible playbook in `ansible/setup.yml`. The app role writes `/opt/todo-api/docker-compose.yml` from `roles/app/templates/docker-compose.prod.yml.j2`, using the GHCR API image, MongoDB, and the persistent `mongodb_data` volume. Re-run Ansible if the production Compose template changes.
+
+The remote server must also have a GitHub Actions self-hosted runner registered for this repository, and the runner user must be able to run Docker commands.
